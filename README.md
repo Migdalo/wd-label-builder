@@ -1,10 +1,10 @@
 # WDLabelBuilder
-Commandline tool for generating Wikidata labels, descriptions and aliases, and outputing them in QuickStatements compatible form.
+Command-line tool for generating Wikidata labels, descriptions and aliases, and outputing them in QuickStatements compatible form.
 
 ## Usage
 WDLabelBuilder takes a json file that contains Wikidata qnumbers and labels in one language, and creates labels on other language. User may choose to copy the labels from the input file as labels in another language. 
 
-By default the results are saved to a file in a QuickStatements compatible form.
+By default the results are saved to a file as QuickStatements compatible statements.
 
 ```
 usage: wdlabelbuilder.py [-h] [-l | -a | -d] [-t] [-p PREFIX] [-s SUFFIX]
@@ -58,3 +58,6 @@ For example the following commands would use the year in literature examples abo
 
 ### Output
 By default the output will be produced as a file named 'output' which contains strings that can be imported to QuickStatements. It's also possible to export the results as a json file or as QuickStatements 2 link. 
+
+## License
+WDLabelBuilder is licensed under [MIT license](./LICENSE).
