@@ -22,7 +22,7 @@ except ImportError:
 
 class WDLabelBuilder():
 
-    def __init__(self, args, output_stream=sys.stdout):
+    def __init__(self, args, output_stream=None):
         self.lang = args.language
         self.timeseries = args.timeseries
         self.output_json = args.json
@@ -32,10 +32,7 @@ class WDLabelBuilder():
         self.prefix = self.parse(args.prefix)
         self.suffix = self.parse(args.suffix)
         self.get_output_type(args)
-        if output_stream:
-            self.output_stream = output_stream
-        else:
-            self.output_stream = None
+        self.output_stream = output_stream
         if self.output_json:
             self.output_filename = 'output.json'
         else:
@@ -44,10 +41,10 @@ class WDLabelBuilder():
         self.read_json(args.filename)
 
     def parse(self, value):
-        if sys.version_info.major > 2:
-            return value
+        if sys.version_info.major < 3:
+            return value.encode('utf-8')
         else:
-            return unicode(value, encoding='utf-8')
+            return value
 
     def get_output_type(self, args):
         '''
@@ -149,7 +146,7 @@ class WDLabelBuilder():
                 + self.lang + self.ll.TAB
             new_label = self.get_new_label(node)
             line += '"' + new_label + '"' + '\n'
-            outfile.write(line.encode('utf-8'))
+            outfile.write(self.parse(line))
             count += 1
             node = node.next
         return count
@@ -160,7 +157,8 @@ class WDLabelBuilder():
             save_type = 'wb'
         else:
             save_type = 'w'
-        if self.output_stream != sys.stdout:
+        if self.output_stream:
+            print('asd', sys.stdout)
             count = self.save_to_file(self.output_stream)
         else:
             with open(self.output_filename, save_type) as outfile:
@@ -181,7 +179,7 @@ class WDLabelBuilder():
             data.append(line)
             count += 1
             node = node.next
-        if self.output_stream != sys.stdout:
+        if self.output_stream:
             json.dump(data, self.output_stream, ensure_ascii=True,
                       separators=(',', ': '))
         else:
@@ -233,10 +231,11 @@ def process_arguments(input_args=None, output_filename=''):
     output_group.add_argument(
         '-u', '--url', action='store_true',
         help='Export results as a QuickStatements 2 url.')
-    if input_args:
+    args = parser.parse_args(input_args)
+    '''if input_args:
         args = parser.parse_args(input_args)
     else:
-        args = parser.parse_args()
+        args = parser.parse_args()'''
     if not args.label and not args.alias and not args.description:
         raise parser.error(
             'Missing required value: label, alias or description.')

@@ -18,9 +18,6 @@ class Node(object):
             except ValueError:
                 self.point_in_time = ' '.join(label.split()[2:])
 
-    def print_me(self):
-        print(self.point_in_time, '<', self.next._point_in_time)
-
 
 class LinkedList(object):
     TAB = '	'
@@ -38,12 +35,6 @@ class LinkedList(object):
             self.head = node
             self.tail = node
             self.length += 1
-        elif self.length == 1:
-            # Add node to a list with one other node
-            if node.point_in_time > self.head.point_in_time:
-                self.add_tail(node)
-            else:
-                self.add_head(node)
         elif node.point_in_time < self.head.point_in_time:
             # Add new head
             self.add_head(node)
