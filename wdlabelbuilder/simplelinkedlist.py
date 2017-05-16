@@ -18,7 +18,6 @@ class Node(object):
             except ValueError:
                 self.point_in_time = ' '.join(label.split()[2:])
 
-
     def print_me(self):
         print(self.point_in_time, '<', self.next._point_in_time)
 
@@ -32,7 +31,6 @@ class LinkedList(object):
         self.length = 0
         self.qprint_len = 0
         self.value_print_len = 0
-
 
     def add_node(self, node):
         if self.length == 0:
@@ -56,7 +54,6 @@ class LinkedList(object):
             # Add node to a list with at least two other nodes
             self.add_node_to_position(node)
 
-
     def add_head(self, node):
         '''
         Add a node as the new head of the list.
@@ -65,7 +62,6 @@ class LinkedList(object):
         self.head = node
         node.next = tmp
         self.length += 1
-
 
     def add_tail(self, node):
         '''
@@ -76,42 +72,15 @@ class LinkedList(object):
         tmp.next = node
         self.length += 1
 
-
     def add_node_to_position(self, node):
         '''
         Add a node to the list based on the
         value of point_in_time.
         '''
         item = self.head
-        while item.point_in_time > node.point_in_time:
+        while item.point_in_time < node.point_in_time:
+            prev = item
             item = item.next
-        node.next = item.next
-        item.next = node
+        node.next = item
+        prev.next = node
         self.length += 1
-
-
-    def list_print(self):
-        ''' Print all the nodes in the list. '''
-        node = self.head
-        while node:
-            print(str(node.qnumber).ljust(self.qprint_len), end='')
-            print(str(node.point_in_time).ljust(self.value_print_len), '<', end='')
-            try:
-                print(node.next.point_in_time)
-            except AttributeError:
-                print(' ' * self.value_print_len)
-            node = node.next
-
-
-if __name__ == '__main__':
-    from itertools import permutations
-    nodes = []
-    lista = LinkedList()
-
-    for number in [5, 9, 3, 4, 1, 2, 12]:
-        lista.add_node(Node(number, 'asd ' + str(number)))
-        item = lista.head
-        while item:
-            print(item.point_in_time, item.label)
-            item = item.next
-        print()
