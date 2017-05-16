@@ -1,5 +1,6 @@
 import wdlabelbuilder.wdlabelbuilder as wdlabelbuilder
 import unittest
+import sys
 try:
     from StringIO import StringIO
 except ImportError:
@@ -8,12 +9,19 @@ except ImportError:
 
 class WDLabelBuilderTests(unittest.TestCase):
 
+    if sys.version_info >= (3, 0):
+        def parse(self, value):
+            return value
+    else:
+        def parse(self, value):
+            return value.encode('utf8')
+
     def test_timeseries_label_qs(self):
-        expected = 'Q2052948	Lfi	"eduskuntavaalit 1907"\n' +\
+        expected = self.parse('Q2052948	Lfi	"eduskuntavaalit 1907"\n' +\
                    'Q1853901	Lfi	"eduskuntavaalit 1908"\n' +\
                    'Q1571365	Lfi	"eduskuntavaalit 1909"\n' +\
                    'Q1852888	Lfi	"eduskuntavaalit 1910"\n' +\
-                   'Q1571375	Lfi	"eduskuntavaalit 1911"\n'
+                   'Q1571375	Lfi	"eduskuntavaalit 1911"\n')
         commands = ['-l', '-t', '-p', 'eduskuntavaalit',
                     'fi', './tests/query.json']
         outfile = StringIO()
@@ -22,11 +30,11 @@ class WDLabelBuilderTests(unittest.TestCase):
         outfile.close()
 
     def test_timeseries_description_qs(self):
-        expected = 'Q2052948	Dfi	"eduskuntavaalit 1907"\n' +\
+        expected = self.parse('Q2052948	Dfi	"eduskuntavaalit 1907"\n' +\
                    'Q1853901	Dfi	"eduskuntavaalit 1908"\n' +\
                    'Q1571365	Dfi	"eduskuntavaalit 1909"\n' +\
                    'Q1852888	Dfi	"eduskuntavaalit 1910"\n' +\
-                   'Q1571375	Dfi	"eduskuntavaalit 1911"\n'
+                   'Q1571375	Dfi	"eduskuntavaalit 1911"\n')
         commands = ['-d', '-t', '-p', 'eduskuntavaalit',
                     'fi', './tests/query.json']
         outfile = StringIO()
@@ -35,26 +43,27 @@ class WDLabelBuilderTests(unittest.TestCase):
         outfile.close()
 
     def test_timeseries_alias_qs(self):
-        expected = 'Q2052948	Afi	"eduskuntavaalit 1907"\n' +\
+        expected = self.parse('Q2052948	Afi	"eduskuntavaalit 1907"\n' +\
                    'Q1853901	Afi	"eduskuntavaalit 1908"\n' +\
                    'Q1571365	Afi	"eduskuntavaalit 1909"\n' +\
                    'Q1852888	Afi	"eduskuntavaalit 1910"\n' +\
-                   'Q1571375	Afi	"eduskuntavaalit 1911"\n'
+                   'Q1571375	Afi	"eduskuntavaalit 1911"\n')
         commands = ['-a', '-t', '-p', 'eduskuntavaalit',
                     'fi', './tests/query.json']
         outfile = StringIO()
         wdlabelbuilder.process_arguments(commands, outfile)
+        print(type(expected), type(outfile.getvalue()))
         self.assertMultiLineEqual(outfile.getvalue(), expected)
         outfile.close()
 
     def test_url_output(self):
-        expected = 'https://tools.wmflabs.org/quickstatements/#v1=' +\
+        expected = self.parse('https://tools.wmflabs.org/quickstatements/#v1=' +\
                    'Q2052948%09Len%09%22Finnish%20parliamentary%20election,' +\
                    '%201907%22%0AQ1853901%09Len%09%22Finnish%20parliamentary' +\
                    '%20election,%201908%22%0AQ1571365%09Len%09%22Finnish' +\
                    '%20parliamentary%20election,%201909%22%0AQ1852888%09Len' +\
                    '%09%22Finnish%20parliamentary%20election,%201910%22' +\
-                   '%0AQ1571375%09Len%09%22Finnish%20parliamentary%20election,%201911%22\n'.encode('utf-8')
+                   '%0AQ1571375%09Len%09%22Finnish%20parliamentary%20election,%201911%22\n')
         commands = ['-u', '-l', 'en', './tests/query.json']
         outfile = StringIO()
         wdlabelbuilder.process_arguments(commands, outfile)
@@ -62,15 +71,17 @@ class WDLabelBuilderTests(unittest.TestCase):
         outfile.close()
 
     def test_timeseries_labe_json(self):
-        expected = '[{"lang": "fi","item": "Q2052948","label": "eduskuntavaalit 1907"},'+\
+        expected = self.parse('[{"lang": "fi","item": "Q2052948","label": "eduskuntavaalit 1907"},'+\
             '{"lang": "fi","item": "Q1853901","label": "eduskuntavaalit 1908"},'+\
             '{"lang": "fi","item": "Q1571365","label": "eduskuntavaalit 1909"},'+\
             '{"lang": "fi","item": "Q1852888","label": "eduskuntavaalit 1910"},'+\
-            '{"lang": "fi","item": "Q1571375","label": "eduskuntavaalit 1911"}]'
+            '{"lang": "fi","item": "Q1571375","label": "eduskuntavaalit 1911"}]')
         commands = ['-l', '-t', '-j', '-p', 'eduskuntavaalit',
                     'fi', './tests/query.json']
         outfile = StringIO()
         wdlabelbuilder.process_arguments(commands, outfile)
+        print(outfile.getvalue())
+        print(expected)
         self.assertMultiLineEqual(outfile.getvalue(), expected)
         outfile.close()
 
