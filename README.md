@@ -1,5 +1,8 @@
 # WDLabelBuilder
-Command-line tool for generating Wikidata labels, descriptions and aliases, and outputing them in QuickStatements compatible form.
+[![Build Status](https://travis-ci.org/Migdalo/wd-label-builder.svg?branch=master)](https://travis-ci.org/Migdalo/wd-label-builder)
+[![Coverage Status](https://coveralls.io/repos/github/Migdalo/wd-label-builder/badge.svg?branch=master)](https://coveralls.io/github/Migdalo/wd-label-builder?branch=master)
+
+Command-line tool for generating Wikidata labels, descriptions and aliases, and outputing them in QuickStatements compatible form. Written in Python 2.
 
 ## Usage
 WDLabelBuilder takes a json file that contains Wikidata qnumbers and labels in one language, and creates labels on other language. User may choose to copy the labels from the input file as labels in another language. 
