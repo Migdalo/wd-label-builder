@@ -158,7 +158,6 @@ class WDLabelBuilder():
         else:
             save_type = 'w'
         if self.output_stream:
-            print('asd', sys.stdout)
             count = self.save_to_file(self.output_stream)
         else:
             with open(self.output_filename, save_type) as outfile:
@@ -242,5 +241,5 @@ def process_arguments(input_args=None, output_filename=''):
     qs_file = WDLabelBuilder(args, output_filename)
     qs_file.generate_file()
 
-if __name__ == '__main__':
+if __name__ == '__main__': # pragma: no cover
     process_arguments()
