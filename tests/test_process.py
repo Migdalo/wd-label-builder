@@ -70,13 +70,30 @@ class WDLabelBuilderTests(unittest.TestCase):
         self.assertMultiLineEqual(outfile.getvalue(), expected)
         outfile.close()
 
-    def test_timeseries_labe_json(self):
-        expected = self.parse('[{"lang": "fi","item": "Q2052948","label": "eduskuntavaalit 1907"},'+\
+    def test_timeseries_label_prefix_json(self):
+        expected = self.parse(
+            '[{"lang": "fi","item": "Q2052948","label": "eduskuntavaalit 1907"},'+\
             '{"lang": "fi","item": "Q1853901","label": "eduskuntavaalit 1908"},'+\
             '{"lang": "fi","item": "Q1571365","label": "eduskuntavaalit 1909"},'+\
             '{"lang": "fi","item": "Q1852888","label": "eduskuntavaalit 1910"},'+\
             '{"lang": "fi","item": "Q1571375","label": "eduskuntavaalit 1911"}]')
         commands = ['-l', '-t', '-j', '-p', 'eduskuntavaalit',
+                    'fi', './tests/query.json']
+        outfile = StringIO()
+        wdlabelbuilder.process_arguments(commands, outfile)
+        print(outfile.getvalue())
+        print(expected)
+        self.assertMultiLineEqual(outfile.getvalue(), expected)
+        outfile.close()
+
+    def test_timeseries_label_suffix_json(self):
+        expected = self.parse(
+            '[{"lang": "fi","item": "Q2052948","label": "1907 eduskuntavaalit"},'+\
+            '{"lang": "fi","item": "Q1853901","label": "1908 eduskuntavaalit"},'+\
+            '{"lang": "fi","item": "Q1571365","label": "1909 eduskuntavaalit"},'+\
+            '{"lang": "fi","item": "Q1852888","label": "1910 eduskuntavaalit"},'+\
+            '{"lang": "fi","item": "Q1571375","label": "1911 eduskuntavaalit"}]')
+        commands = ['-l', '-t', '-j', '-s', 'eduskuntavaalit',
                     'fi', './tests/query.json']
         outfile = StringIO()
         wdlabelbuilder.process_arguments(commands, outfile)
@@ -93,19 +110,25 @@ class WDLabelBuilderTests(unittest.TestCase):
 
     def test_empty_input_file(self):
         ''' Input an empty json file, expect SystemExit. '''
-        commands = ['-l', 'fi', 'empty.json']
+        commands = ['-l', 'fi', './tests/empty.json']
+        with self.assertRaises(SystemExit):
+            args = wdlabelbuilder.process_arguments(commands)
+
+    def test_non_json_input_file(self):
+        ''' Input a non-json file, expect SystemExit. '''
+        commands = ['-l', 'fi', './tests/non_json_file']
         with self.assertRaises(SystemExit):
             args = wdlabelbuilder.process_arguments(commands)
 
     def test_wrong_input_filepath(self):
         ''' Input a wrong input filepath, expect SystemExit. '''
-        commands = ['-l', 'fi', 'woefichtr.json']
+        commands = ['-l', 'fi', './tests/woefichtr.json']
         with self.assertRaises(SystemExit):
             args = wdlabelbuilder.process_arguments(commands)
 
     def test_no_lda(self):
         ''' Input arguments without -l, -d or -a, expect SystemExit. '''
-        commands = ['fi', 'query.json']
+        commands = ['fi', './tests/query.json']
         with self.assertRaises(SystemExit):
             args = wdlabelbuilder.process_arguments(commands)
 
