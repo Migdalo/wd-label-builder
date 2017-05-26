@@ -33,7 +33,9 @@ class WDLabelBuilder():
         self.suffix = self.parse(args.suffix)
         self.get_output_type(args)
         self.output_stream = output_stream
-        if self.output_json:
+        if args.output_filename:
+            self.output_filename = args.output_filename
+        elif self.output_json:
             self.output_filename = 'output.json'
         else:
             self.output_filename = 'output'
@@ -158,7 +160,6 @@ class WDLabelBuilder():
         else:
             save_type = 'w'
         if self.output_stream:
-            print('asd', sys.stdout)
             count = self.save_to_file(self.output_stream)
         else:
             with open(self.output_filename, save_type) as outfile:
@@ -174,7 +175,7 @@ class WDLabelBuilder():
             new_label = self.get_new_label(node)
             line = {}
             line[self.qnumber_title] = node.qnumber
-            line[self.output_type[1]] = new_label
+            line[self.label_title] = new_label # self.output_type[1]
             line['lang'] = self.lang
             data.append(line)
             count += 1
@@ -185,11 +186,11 @@ class WDLabelBuilder():
         else:
             with open(self.output_filename, 'w') as outfile:
                 json.dump(data, outfile, ensure_ascii=True,
-                          indent=4, separators=(',', ': '))
+                          separators=(',', ': '), encoding="utf-8")
         print(count, 'lines saved to file.')
 
 
-def process_arguments(input_args=None, output_filename=''):
+def process_arguments(input_args=None, output_stream=''):
     ''' Generate help page and process user arguments. '''
     parser = argparse.ArgumentParser(
         description='Create labels, descriptions and aliases ' +
@@ -231,16 +232,14 @@ def process_arguments(input_args=None, output_filename=''):
     output_group.add_argument(
         '-u', '--url', action='store_true',
         help='Export results as a QuickStatements 2 url.')
+    parser.add_argument('-o', '--output_filename', help='Output filepath.' +
+        'Default is "output.json" for json files and "output" for qs-files.')
     args = parser.parse_args(input_args)
-    '''if input_args:
-        args = parser.parse_args(input_args)
-    else:
-        args = parser.parse_args()'''
     if not args.label and not args.alias and not args.description:
         raise parser.error(
             'Missing required value: label, alias or description.')
-    qs_file = WDLabelBuilder(args, output_filename)
+    qs_file = WDLabelBuilder(args, output_stream)
     qs_file.generate_file()
 
-if __name__ == '__main__':
+if __name__ == '__main__': # pragma: no cover
     process_arguments()
