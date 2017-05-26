@@ -18,13 +18,6 @@ class WDLabelBuilderTests(unittest.TestCase):
         def parse(self, value):
             return value.encode('utf8')
 
-    def file_exists(self, filename):
-        while os.path.isfile(filename):
-            print(os.path.isfile(filename))
-            print(filename)
-            filename += '1'
-        return filename
-
     def test_timeseries_label_qs(self):
         expected = self.parse('Q2052948	Lfi	"eduskuntavaalit 1907"\n' +\
                    'Q1853901	Lfi	"eduskuntavaalit 1908"\n' +\
@@ -60,8 +53,6 @@ class WDLabelBuilderTests(unittest.TestCase):
         commands = ['-a', '-t', '-p', 'eduskuntavaalit',
                     '-o', './tests/output', 'fi', './tests/query.json']
         wdlabelbuilder.process_arguments(commands)
-        #filename = self.file_exists('./tests/output')
-        #print(filename)
         with open('./tests/output', 'r') as infile:
             data = infile.read()
         self.assertMultiLineEqual(data, expected)
